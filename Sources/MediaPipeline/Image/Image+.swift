@@ -1,5 +1,11 @@
 #if canImport(UIKit)
 import UIKit
+public typealias PlatformImage = UIImage
+#elseif canImport(AppKit)
+import AppKit
+public typealias PlatformImage = NSImage
+#endif
+import Foundation
 import UniformTypeIdentifiers
 import os
 
@@ -8,7 +14,7 @@ fileprivate let logger = Logger(
     category: #file
 )
 
-extension UIImage {
+extension PlatformImage {
     func data(allowTypes: [UTType], fileLengthLimit: Int) -> (Data, UTType)? {
         if allowTypes.contains(.heic), let data = heicData() {
             if data.count <= fileLengthLimit {
@@ -38,5 +44,3 @@ extension UIImage {
     }
 }
 
-
-#endif

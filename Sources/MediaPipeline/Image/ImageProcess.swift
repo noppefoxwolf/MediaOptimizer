@@ -1,5 +1,5 @@
-import UIKit
 import os
+import Foundation
 
 fileprivate let logger = Logger(
     subsystem: Bundle.main.bundleIdentifier! + ".logger",
@@ -7,13 +7,13 @@ fileprivate let logger = Logger(
 )
 
 protocol ImageProcess: Sendable {
-    func process(_ image: UIImage) -> UIImage
+    func process(_ image: PlatformImage) -> PlatformImage
 }
 
 struct ImagePipeline {
     var processors: [ImageProcess] = []
     
-    func makeImage(from image: UIImage) -> UIImage {
+    func makeImage(from image: PlatformImage) -> PlatformImage {
         var result = image
         for processor in processors {
             result = processor.process(result)

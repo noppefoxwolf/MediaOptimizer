@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "MediaPipeline",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
             name: "MediaPipeline",

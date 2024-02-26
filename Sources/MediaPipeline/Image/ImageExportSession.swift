@@ -1,6 +1,4 @@
-#if canImport(UIKit)
 import Foundation
-import UIKit
 import UniformTypeIdentifiers
 import AVKit
 import os
@@ -12,7 +10,7 @@ fileprivate let logger = Logger(
 )
 
 public struct ImageExportSessionConfiguration {
-    public init(image: UIImage) {
+    public init(image: PlatformImage) {
         self.image = image
     }
     public var supportedMimeTypes: [String] = [
@@ -34,9 +32,20 @@ public struct ImageExportSessionConfiguration {
     
     public var maxImageSize: ImageSize = .ultraHD
     
-    public let image: UIImage
+    public let image: PlatformImage
     // フォーマットの優先度
-    public let formatPriority: [UTType] = [.heic, .png, .jpeg]
+    #if os(iOS)
+    public let formatPriority: [UTType] = [
+        .heic,
+        .png,
+        .jpeg
+    ]
+    #else
+    public let formatPriority: [UTType] = [
+        .png,
+        .jpeg
+    ]
+    #endif
 }
 
 public final class ImageExportSession {
@@ -90,4 +99,3 @@ public final class ImageExportSession {
         return url
     }
 }
-#endif
