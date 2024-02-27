@@ -1,4 +1,5 @@
 import SwiftUI
+import _AVKit_SwiftUI
 import MediaPipeline
 import PhotosUI
 
@@ -13,22 +14,153 @@ struct App: SwiftUI.App {
 
 struct ContentView: View {
     @State
-    var selection: PhotosPickerItem? = nil
+    var image: PhotosPickerItem? = nil
+    
+    @State
+    var video: PhotosPickerItem? = nil
     
     var body: some View {
-        PhotosPicker(
-            selection: $selection,
-            label: {
-                Text("Choose")
-            }
-        )
+        VStack(content: {
+            PhotosPicker(
+                selection: $image,
+                matching: .images,
+                label: {
+                    Text("Choose")
+                }
+            )
+            PhotosPicker(
+                selection: $video,
+                matching: .videos,
+                label: {
+                    Text("Choose")
+                }
+            )
+        })
         .photosPickerStyle(.inline)
+        .photosPickerAccessoryVisibility(.hidden)
         .sheet(isPresented:
-                Binding(get: { selection != nil }, set: { if !$0 { selection = nil } })
+                Binding(get: { image != nil }, set: { if !$0 { image = nil } })
         ) {
             NavigationStack {
-                PhotoEditorView(selection: selection!)
+                PhotoEditorView(selection: image!)
             }
+        }
+        .sheet(isPresented:
+                Binding(get: { video != nil }, set: { if !$0 { video = nil } })
+        ) {
+            NavigationStack {
+                VideoEditorView(selection: video!)
+            }
+        }
+    }
+}
+
+struct VideoEditorView: View {
+    let selection: PhotosPickerItem
+    
+    @State
+    var originalURL: URL? = nil
+    
+    @State
+    var originalVideoPlayer: AVPlayer? = nil
+    
+    @State
+    var originalVideoSize: CGSize? = nil
+    
+    @State
+    var exportProgress: Float = 0
+    
+    @State
+    var exportedURL: URL? = nil
+    
+    @State
+    var exportedVideoPlayer: AVPlayer? = nil
+    
+    @State
+    var exportedVideoSize: CGSize? = nil
+    
+    @State
+    var videoSizeLimit: Int = 5
+    
+    @State
+    var videoMatrixLimit: Int = 1024
+    
+    var body: some View {
+        ScrollView(content: {
+            HStack {
+                VStack {
+                    VideoPlayer(player: originalVideoPlayer)
+                        .frame(height: 200)
+                    if let url = originalURL {
+                        Text(url.pathExtension)
+                        
+                        let attr = try! FileManager.default.attributesOfItem(atPath: url.path())
+                        Text((attr[.size] as! UInt64).formatted(.byteCount(style: .file)))
+                    }
+                    if let size = originalVideoSize {
+                        Text("\(Int(size.width))x\(Int(size.height))")
+                    }
+                }
+                VStack {
+                    VideoPlayer(player: exportedVideoPlayer)
+                        .frame(height: 200)
+                    ProgressView(value: exportProgress)
+                        .progressViewStyle(.linear)
+                    if let url = exportedURL {
+                        Text(url.pathExtension)
+                        
+                        let attr = try! FileManager.default.attributesOfItem(atPath: url.path())
+                        Text((attr[.size] as! UInt64).formatted(.byteCount(style: .file)))
+                    }
+                    if let size = exportedVideoSize {
+                        Text("\(Int(size.width))x\(Int(size.height))")
+                    }
+                }
+            }
+            Stepper(value: $videoSizeLimit, in: 1...100, step: 5) {
+                Text("Data Size Limit: ") + Text((videoSizeLimit * 1024 * 1024).formatted(.byteCount(style: .file)))
+            }
+            
+            Stepper(value: $videoMatrixLimit, in: 512...4096, step: 512) {
+                Text("Matrix Limit: ") + Text((videoMatrixLimit * videoMatrixLimit).formatted())
+            }
+        })
+        .toolbar(content: {
+            ToolbarItem(placement: .bottomBar) {
+                Button {
+                    Task {
+                        var configuration = VideoExportSessionConfiguration(url: originalURL!)
+                        configuration.videoSizeLimit = Int64(videoSizeLimit * 1024 * 1024)
+                        configuration.videoMatrixLimit = videoMatrixLimit * videoMatrixLimit
+                        let session = VideoExportSession(configuration: configuration)
+                        for try await updates in session.export() {
+                            switch updates {
+                            case .progress(let progress):
+                                exportProgress = progress
+                            case .exported(let url):
+                                exportedURL = url
+                                exportedVideoPlayer = AVPlayer(url: exportedURL!)
+                                let asset = AVAsset(url: exportedURL!)
+                                let tracks = try await asset.loadTracks(withMediaType: .video)
+                                exportedVideoSize = try await tracks[0].load(.naturalSize)
+                                exportProgress = 0
+                            }
+                        }
+                    }
+                } label: {
+                    Text("Optimize")
+                }
+
+            }
+        })
+        
+        .task {
+            let movie = try! await selection.loadTransferable(type: Movie.self)!
+            originalURL = movie.url
+            originalVideoPlayer = AVPlayer(url: originalURL!)
+            let asset = AVAsset(url: originalURL!)
+            let tracks = try! await asset.loadTracks(withMediaType: .video)
+            originalVideoSize = try! await tracks[0].load(.naturalSize)
         }
     }
 }
@@ -62,6 +194,9 @@ struct PhotoEditorView: View {
     @State
     var allowsHEIC: Bool = true
     
+    @State
+    var isProcessing: Bool = false
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -86,6 +221,9 @@ struct PhotoEditorView: View {
                             Text(exportedDataCount.formatted(.byteCount(style: .file)))
                             Text(exportedFileType)
                         }
+                    }
+                    if isProcessing {
+                        ProgressView().progressViewStyle(.circular)
                     }
                 }
                 
@@ -124,14 +262,16 @@ struct PhotoEditorView: View {
                     }
                     let session = ImageExportSession(configuration: configuration)
                     Task {
+                        isProcessing = true
                         let url = try await session.export()
                         let attr = try FileManager.default.attributesOfItem(atPath: url.path())
                         exportedFileType = url.pathExtension
                         exportedUIImage = UIImage(contentsOfFile: url.path())
                         exportedDataCount = attr[.size] as! UInt64
+                        isProcessing = false
                     }
                 } label: {
-                    Text("Optimized")
+                    Text("Optimize")
                 }.disabled(uiImage == nil)
             }
         })
@@ -143,3 +283,24 @@ struct PhotoEditorView: View {
     }
 }
 
+import CoreTransferable
+
+struct Movie: Transferable {
+  let url: URL
+
+  static var transferRepresentation: some TransferRepresentation {
+    FileRepresentation(contentType: .movie) { movie in
+      SentTransferredFile(movie.url)
+    } importing: { receivedData in
+      let fileName = receivedData.file.lastPathComponent
+      let copy: URL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+
+      if FileManager.default.fileExists(atPath: copy.path) {
+        try FileManager.default.removeItem(at: copy)
+      }
+
+      try FileManager.default.copyItem(at: receivedData.file, to: copy)
+      return .init(url: copy)
+    }
+  }
+}

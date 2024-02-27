@@ -9,6 +9,11 @@ public struct VideoExportSessionConfiguration: Sendable {
     }
     
     public var videoSizeLimit: Int64 = 103809024
+    var prefferfVideoSizeLimit: Int64 {
+        let rate = wantsAdjustSizeLimit ? 0.9 : 1.0
+        return Int64(Double(videoSizeLimit) * rate)
+    }
+    public var wantsAdjustSizeLimit: Bool = true
     public var videoFrameRateLimit: Int = 120
     public var videoMatrixLimit: Int = 8294400
     public var supportedMimeTypes: [String] = [
@@ -29,7 +34,7 @@ public final class VideoExportSession {
         self.configuration = configuration
     }
     
-    public func export() async throws -> AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
+    public func export() -> AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
         let asset = AVURLAsset(url: configuration.url)
         let preset = prefferedPreset(videoMatrixLimit: configuration.videoMatrixLimit)
         // TODO: framerate check
@@ -37,20 +42,24 @@ public final class VideoExportSession {
             asset: asset,
             presetName: preset?.avAssetExport ?? AVAssetExportPresetPassthrough
         )!
-        session.fileLengthLimit = configuration.videoSizeLimit
+        session.fileLengthLimit = configuration.prefferfVideoSizeLimit
         session.shouldOptimizeForNetworkUse = true
         
         let type = configuration
             .supportedUTTypes
             .first(where: { configuration.formatPriority.contains($0) })
         guard let type else {
-            throw VideoExportSessionError.noPreferredType
+            return .init(unfolding: { throw VideoExportSessionError.noPreferredType })
         }
         
-        let filename = UUID().uuidString
-        session.outputURL = try URL.temporary(filename: filename, type: type)
-        session.outputFileType = AVFileType(type.identifier)
-        return session.exportStatus()
+        do {
+            let filename = UUID().uuidString
+            session.outputURL = try URL.temporary(filename: filename, type: type)
+            session.outputFileType = AVFileType(type.identifier)
+            return session.exportStatus()
+        } catch {
+            return .init(unfolding: { throw error })
+        }
     }
     
     func prefferedPreset(videoMatrixLimit: Int) -> ExportPreset? {
