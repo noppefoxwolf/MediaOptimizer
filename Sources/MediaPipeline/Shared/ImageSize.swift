@@ -13,10 +13,10 @@ public struct Size: Sendable, Hashable {
     public let width: Int
     public let height: Int
     
-    public static var ultraHD = Size(width: 3840, height: 2160)
-    public static var fullHD = Size(width: 1920, height: 1080)
-    public static var hd = Size(width: 1280, height: 720)
-    public static var sd = Size(width: 720, height: 480)
+    public static let ultraHD = Size(width: 3840, height: 2160)
+    public static let fullHD = Size(width: 1920, height: 1080)
+    public static let hd = Size(width: 1280, height: 720)
+    public static let sd = Size(width: 720, height: 480)
     
     public init(width: Int, height: Int) {
         self.width = width
