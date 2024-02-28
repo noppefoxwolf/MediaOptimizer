@@ -16,6 +16,7 @@ public struct VideoExportSessionConfiguration: Sendable {
     public var wantsAdjustSizeLimit: Bool = true
     public var videoFrameRateLimit: Int = 120
     public var videoMatrixLimit: Int = 8294400
+    public var maxVideoSize: VideoSize = .ultraHD
     public var supportedMimeTypes: [String] = [
         "video/mp4",
     ]
@@ -36,7 +37,10 @@ public final class VideoExportSession {
     
     public func export() -> AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
         let asset = AVURLAsset(url: configuration.url)
-        let preset = prefferedPreset(videoMatrixLimit: configuration.videoMatrixLimit)
+        let preset = prefferedPreset(
+            videoMatrixLimit: configuration.videoMatrixLimit,
+            maxVideoSize: configuration.maxVideoSize
+        )
         // TODO: framerate check
         let session = AVAssetExportSession(
             asset: asset,
@@ -62,9 +66,11 @@ public final class VideoExportSession {
         }
     }
     
-    func prefferedPreset(videoMatrixLimit: Int) -> ExportPreset? {
+    func prefferedPreset(videoMatrixLimit: Int, maxVideoSize: VideoSize) -> ExportPreset? {
         ExportPreset.allCases.reversed().firstNonNil({
-            $0.matrix < videoMatrixLimit ? $0 : nil
+            let lessThanEqualMatrix = $0.matrix <= videoMatrixLimit
+            let lessThanEqualSize = maxVideoSize.contains($0.size)
+            return lessThanEqualSize && lessThanEqualMatrix ? $0 : nil
         })
     }
 }
@@ -88,6 +94,21 @@ enum ExportPreset: CaseIterable {
             2_073_600
         case .preset3840x2160:
             8_294_400
+        }
+    }
+    
+    var size: VideoSize {
+        switch self {
+        case .preset640x480:
+            VideoSize(width: 640, height: 480)
+        case .preset960x540:
+            VideoSize(width: 960, height: 540)
+        case .preset1280x720:
+            VideoSize(width: 1280, height: 720)
+        case .preset1920x1080:
+            VideoSize(width: 1920, height: 1080)
+        case .preset3840x2160:
+            VideoSize(width: 3840, height: 2160)
         }
     }
     

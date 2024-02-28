@@ -73,6 +73,11 @@ extension Size: Comparable {
     public static func < (lhs: Size, rhs: Size) -> Bool {
         lhs.width < rhs.width && lhs.height < rhs.height
     }
+    
+    public func contains(_ size: Size) -> Bool {
+        let rotateSize = Size(width: size.height, height: size.width)
+        return self >= size || self >= rotateSize
+    }
 }
 
 extension Size: CustomDebugStringConvertible {

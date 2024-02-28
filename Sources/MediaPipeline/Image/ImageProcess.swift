@@ -11,7 +11,7 @@ protocol ImageProcess: Sendable {
 }
 
 struct ImagePipeline {
-    var processors: [ImageProcess] = []
+    var processors: [any ImageProcess] = []
     
     func makeImage(from image: PlatformImage) -> PlatformImage {
         var result = image
