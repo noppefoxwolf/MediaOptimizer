@@ -13,11 +13,11 @@ typealias GraphicsImageRendererFormat = NSGraphicsImageRendererFormat
 typealias GraphicsImageRenderer = NSGraphicsImageRenderer
 typealias GraphicsImageRendererContext = NSGraphicsImageRendererContext
 
-class NSGraphicsImageRendererFormat {
+class NSGraphicsImageRendererFormat: Sendable {
     var scale: Double = 1
 }
 
-class NSGraphicsImageRenderer {
+class NSGraphicsImageRenderer: Sendable {
     let size: CGSize
     let format: GraphicsImageRendererFormat
     
@@ -38,7 +38,7 @@ class NSGraphicsImageRenderer {
     }
 }
 
-class NSGraphicsImageRendererContext {
+class NSGraphicsImageRendererContext: Sendable {
     let cgContext: CGContext
     
     init(cgContext: CGContext) {

@@ -1,7 +1,7 @@
 @preconcurrency import AVFoundation
 import UniformTypeIdentifiers
 
-public enum VideoExportSessionUpdate {
+public enum VideoExportSessionUpdate: Sendable {
     case progress(Float)
     case exported(URL)
 }

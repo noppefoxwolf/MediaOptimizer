@@ -1,6 +1,6 @@
 import Foundation
 
-public enum VideoExportSessionError: LocalizedError {
+public enum VideoExportSessionError: LocalizedError, Sendable {
     case noVideoTrack
     case tooHighFramerate
     case noPreferredType

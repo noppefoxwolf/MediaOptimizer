@@ -35,8 +35,6 @@ let package = Package(
     ]
 )
 
-
-// Only development
 /*
 let warnConcurrency = "-warn-concurrency"
 let enableActorDataRaceChecks = "-enable-actor-data-race-checks"
@@ -47,6 +45,13 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ForwardTrailingClosures"),
     .enableUpcomingFeature("ImplicitOpenExistentials"),
     .enableUpcomingFeature("StrictConcurrency"),
+    
+    .enableUpcomingFeature("ImportObjcForwardDeclarations"),
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableUpcomingFeature("DeprecateApplicationMain"),
+    .enableUpcomingFeature("IsolatedDefaultValues"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+
     .unsafeFlags([
         warnConcurrency,
         enableActorDataRaceChecks,

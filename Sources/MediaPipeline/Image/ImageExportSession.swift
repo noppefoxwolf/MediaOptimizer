@@ -9,7 +9,7 @@ fileprivate let logger = Logger(
     category: #file
 )
 
-public struct ImageExportSessionConfiguration {
+public struct ImageExportSessionConfiguration: Sendable {
     public init(image: PlatformImage) {
         self.image = image
     }
@@ -48,7 +48,7 @@ public struct ImageExportSessionConfiguration {
     #endif
 }
 
-public final class ImageExportSession {
+public final class ImageExportSession: Sendable {
     public init(configuration: ImageExportSessionConfiguration) {
         self.configuration = configuration
     }

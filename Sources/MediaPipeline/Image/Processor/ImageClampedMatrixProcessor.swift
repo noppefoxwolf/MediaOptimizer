@@ -1,12 +1,13 @@
 import os
 import Foundation
 
+
 fileprivate let logger = Logger(
     subsystem: Bundle.main.bundleIdentifier! + ".logger",
     category: #file
 )
 
-struct ImageClampedMatrixProcessor: ImageProcess {
+struct ImageClampedMatrixProcessor: ImageProcess, Sendable {
     let matrixLimit: Int
     func process(_ image: PlatformImage) -> PlatformImage {
         let imageSize = ImageSize(size: image.size)

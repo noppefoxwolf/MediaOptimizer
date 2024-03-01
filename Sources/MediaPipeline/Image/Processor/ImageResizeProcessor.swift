@@ -6,7 +6,7 @@ fileprivate let logger = Logger(
     category: #file
 )
 
-struct ImageResizeProcessor: ImageProcess {
+struct ImageResizeProcessor: ImageProcess, Sendable {
     let maxSize: ImageSize
     
     func process(_ image: PlatformImage) -> PlatformImage {

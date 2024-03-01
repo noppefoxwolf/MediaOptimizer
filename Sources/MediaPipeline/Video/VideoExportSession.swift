@@ -28,7 +28,7 @@ public struct VideoExportSessionConfiguration: Sendable {
     public let formatPriority: [UTType] = [.mpeg4Movie]
 }
 
-public final class VideoExportSession {
+public final class VideoExportSession: Sendable {
     let configuration: VideoExportSessionConfiguration
     
     public init(configuration: VideoExportSessionConfiguration) {
@@ -75,7 +75,7 @@ public final class VideoExportSession {
     }
 }
 
-enum ExportPreset: CaseIterable {
+enum ExportPreset: CaseIterable, Sendable {
     case preset640x480
     case preset960x540
     case preset1280x720

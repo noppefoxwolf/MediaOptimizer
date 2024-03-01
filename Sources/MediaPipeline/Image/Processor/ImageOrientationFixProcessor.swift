@@ -6,7 +6,7 @@ fileprivate let logger = Logger(
     category: #file
 )
 
-struct ImageOrientationFixProcessor: ImageProcess {
+struct ImageOrientationFixProcessor: ImageProcess, Sendable {
     func process(_ image: PlatformImage) -> PlatformImage {
         #if canImport(UIKit)
         guard image.imageOrientation != .up else {
