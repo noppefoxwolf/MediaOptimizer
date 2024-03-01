@@ -8,6 +8,7 @@ fileprivate let logger = Logger(
 
 public typealias ImageSize = Size
 public typealias VideoSize = Size
+public typealias AspectSize = Size
 
 public struct Size: Sendable, Hashable {
     public let width: Int

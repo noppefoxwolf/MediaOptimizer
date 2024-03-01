@@ -40,4 +40,12 @@ extension ImagePipeline {
         _self.processors.append(ImageClampedMatrixProcessor(matrixLimit: matrixLimit))
         return _self
     }
+    
+    func cropping(to aspectSize: AspectSize?) -> ImagePipeline {
+        var _self = self
+        if let aspectSize {
+            _self.processors.append(ImageCropProcessor(aspectSize: aspectSize))
+        }
+        return _self
+    }
 }

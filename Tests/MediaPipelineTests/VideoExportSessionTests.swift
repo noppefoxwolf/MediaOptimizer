@@ -54,7 +54,7 @@ class VideoExportSessionTests: XCTestCase {
         let url = Bundle.module.url(forResource: "ultraHD8K", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
-        let preset = session.prefferedPreset(videoMatrixLimit: 2_073_600)
+        let preset = session.prefferedPreset(videoMatrixLimit: 2_073_600, maxVideoSize: .ultraHD)
         XCTAssertEqual(preset, .preset1280x720)
     }
 }

@@ -46,6 +46,8 @@ public struct ImageExportSessionConfiguration: Sendable {
         .jpeg
     ]
     #endif
+    
+    public var croppingAspectSize: AspectSize? = nil
 }
 
 public final class ImageExportSession: Sendable {
@@ -67,6 +69,7 @@ public final class ImageExportSession: Sendable {
             
             let imagePipeline = ImagePipeline()
                 .imageOrientationFixed()
+                .cropping(to: configuration.croppingAspectSize)
                 .resized(maxSize: maxImageSize)
                 .clamped(matrixLimit: configuration.imageMatrixLimit)
             
