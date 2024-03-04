@@ -7,28 +7,30 @@ public enum VideoExportSessionUpdate: Sendable {
 }
 
 extension AVAssetExportSession {
-    func exportStatus() -> AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
-        AsyncThrowingStream { continuation in
-            let task = Task(priority: .background) {
-                while progress != 1.0 {
-                    continuation.yield(.progress(progress))
-                    try await Task.sleep(for: .milliseconds(250))
-                }
+    func export(_ progressUpdateHandler: @escaping (Float) -> Void) async throws -> URL {
+        let task = Task(priority: .background) {
+            while progress != 1.0 {
+                progressUpdateHandler(progress)
+                try await Task.sleep(for: .milliseconds(250))
             }
-            exportAsynchronously { [self] in
+        }
+        return try await withTaskCancellationHandler(
+            operation: {
+                await export()
                 if let error {
-                    continuation.finish(throwing: error)
+                    throw error
                 }
                 if let outputURL {
-                    continuation.yield(.exported(outputURL))
-                    continuation.finish()
+                    return outputURL
+                } else {
+                    throw CancellationError()
                 }
-            }
-            continuation.onTermination = { [self] _ in
+            }, 
+            onCancel: {
                 task.cancel()
                 cancelExport()
             }
-        }
+        )
     }
 }
 

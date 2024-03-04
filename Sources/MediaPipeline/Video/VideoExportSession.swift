@@ -35,7 +35,7 @@ public final class VideoExportSession: Sendable {
         self.configuration = configuration
     }
     
-    public func export() -> AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
+    public func export(_ progressUpdateHandler: @escaping (Float) -> Void) async throws -> URL {
         let asset = AVURLAsset(url: configuration.url)
         let preset = prefferedPreset(
             videoMatrixLimit: configuration.videoMatrixLimit,
@@ -53,16 +53,16 @@ public final class VideoExportSession: Sendable {
             .supportedUTTypes
             .first(where: { configuration.formatPriority.contains($0) })
         guard let type else {
-            return .init(unfolding: { throw VideoExportSessionError.noPreferredType })
+            throw VideoExportSessionError.noPreferredType
         }
         
         do {
             let filename = UUID().uuidString
             session.outputURL = try URL.temporary(filename: filename, type: type)
             session.outputFileType = AVFileType(type.identifier)
-            return session.exportStatus()
+            return try await session.export(progressUpdateHandler)
         } catch {
-            return .init(unfolding: { throw error })
+            throw error
         }
     }
     

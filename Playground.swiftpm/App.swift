@@ -133,19 +133,19 @@ struct VideoEditorView: View {
                         configuration.videoSizeLimit = Int64(videoSizeLimit * 1024 * 1024)
                         configuration.videoMatrixLimit = videoMatrixLimit * videoMatrixLimit
                         let session = VideoExportSession(configuration: configuration)
-                        for try await updates in session.export() {
-                            switch updates {
-                            case .progress(let progress):
-                                exportProgress = progress
-                            case .exported(let url):
-                                exportedURL = url
-                                exportedVideoPlayer = AVPlayer(url: exportedURL!)
-                                let asset = AVAsset(url: exportedURL!)
-                                let tracks = try await asset.loadTracks(withMediaType: .video)
-                                exportedVideoSize = try await tracks[0].load(.naturalSize)
-                                exportProgress = 0
+                        let url = try await session.export { progress in
+                            Task {
+                                await MainActor.run {
+                                    exportProgress = progress
+                                }
                             }
                         }
+                        exportedURL = url
+                        exportedVideoPlayer = AVPlayer(url: exportedURL!)
+                        let asset = AVAsset(url: exportedURL!)
+                        let tracks = try await asset.loadTracks(withMediaType: .video)
+                        exportedVideoSize = try await tracks[0].load(.naturalSize)
+                        exportProgress = 0
                     }
                 } label: {
                     Text("Optimize")
