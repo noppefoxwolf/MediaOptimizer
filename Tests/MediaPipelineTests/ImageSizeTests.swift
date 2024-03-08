@@ -26,6 +26,12 @@ class ImageSizeTests: XCTestCase {
         XCTAssertEqual(size.width, 100)
         XCTAssertEqual(size.height, 100)
     }
+    
+    func testClamp() async throws {
+        let size = ImageSize(width: 1, height: 2).clamped(maxSize: Size(width: 2, height: 1))
+        XCTAssertEqual(size.width, 1)
+        XCTAssertEqual(size.height, 2)
+    }
 }
 
 

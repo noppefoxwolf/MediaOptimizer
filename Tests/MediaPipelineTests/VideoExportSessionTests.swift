@@ -8,7 +8,7 @@ class VideoExportSessionTests: XCTestCase {
         let url = Bundle.module.url(forResource: "ultraHD8K", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
-        let outputURL = try await session.export().exported()
+        let outputURL = try await session.export({ _ in })
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
@@ -22,7 +22,7 @@ class VideoExportSessionTests: XCTestCase {
         let url = Bundle.module.url(forResource: "vga", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
-        let outputURL = try await session.export().exported()
+        let outputURL = try await session.export({ _ in })
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
@@ -34,7 +34,7 @@ class VideoExportSessionTests: XCTestCase {
         let url = Bundle.module.url(forResource: "square", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
-        let outputURL = try await session.export().exported()
+        let outputURL = try await session.export({ _ in })
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
@@ -56,16 +56,5 @@ class VideoExportSessionTests: XCTestCase {
         let session = VideoExportSession(configuration: configuration)
         let preset = session.prefferedPreset(videoMatrixLimit: 2_073_600, maxVideoSize: .ultraHD)
         XCTAssertEqual(preset, .preset1280x720)
-    }
-}
-
-extension AsyncThrowingStream<VideoExportSessionUpdate, any Error> {
-    func exported() async throws -> URL {
-        for try await update in self {
-            if case .exported(let url) = update {
-                return url
-            }
-        }
-        fatalError()
     }
 }

@@ -2,7 +2,7 @@ import XCTest
 @testable import MediaPipeline
 
 class ImageCropProcessorTests: XCTestCase {
-    let processor = ImageCropProcessor(aspectRatio: AspectSize(width: 0, height: 0))
+    let processor = ImageCropProcessor(aspectSize: AspectSize(width: 0, height: 0))
     
     func testSizing() async throws {
         let target = CGSize(width: 100, height: 50)

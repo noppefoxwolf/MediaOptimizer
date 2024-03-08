@@ -26,6 +26,7 @@ let package = Package(
             name: "MediaPipelineTests",
             dependencies: ["MediaPipeline"],
             resources: [
+                .copy("Resources/screenshot.png"),
                 .copy("Resources/ultraHD8K.jpg"),
                 .copy("Resources/ultraHD8K.mp4"),
                 .copy("Resources/vga.mp4"),

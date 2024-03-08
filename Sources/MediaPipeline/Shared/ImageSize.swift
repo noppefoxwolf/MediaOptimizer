@@ -14,9 +14,15 @@ public struct Size: Sendable, Hashable {
     public let width: Int
     public let height: Int
     
+    // 4K
     public static let ultraHD = Size(width: 3840, height: 2160)
+    // iPhone 13 Pro Max
+    public static let iPhone13ProMax = Size(width: 2778, height: 1284)
+    // Full HD
     public static let fullHD = Size(width: 1920, height: 1080)
+    // HD
     public static let hd = Size(width: 1280, height: 720)
+    // SD
     public static let sd = Size(width: 720, height: 480)
     
     public init(width: Int, height: Int) {
@@ -45,8 +51,13 @@ public struct Size: Sendable, Hashable {
     }
     
     func clamped(maxSize: Size) -> Size {
-        if width <= maxSize.width && height <= maxSize.height {
-            logger.info("width: \(width) <= \(maxSize.width), height: \(height) <= \(maxSize.height),  passthrough")
+        let maxMaxSizeLength = max(maxSize.width, maxSize.height)
+        let minMaxSizeLength = min(maxSize.width, maxSize.height)
+        let maxSizeLength = max(width, height)
+        let minSizeLength = min(width, height)
+        
+        if maxSizeLength <= maxMaxSizeLength && minSizeLength <= minMaxSizeLength {
+            logger.info("\(maxSizeLength)x\(minSizeLength) <= \(maxMaxSizeLength)x\(minMaxSizeLength),  passthrough")
             return self
         }
         let newSize: Size
