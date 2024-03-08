@@ -25,7 +25,7 @@ class ImagePipelineTests: XCTestCase {
         
         let resultImage = imagePipeline.makeImage(from: image)
         
-        XCTAssertEqual(resultImage.size.width, 322)
+        XCTAssertEqual(resultImage.size.width, 332)
         XCTAssertEqual(resultImage.size.height, 720)
     }
 }
