@@ -15,7 +15,7 @@ fileprivate let logger = Logger(
 )
 
 extension PlatformImage {
-    func data(allowTypes: [UTType], fileLengthLimit: Int) -> (Data, UTType)? {
+    func data(allowTypes: [UTType], fileLengthLimit: Int) -> (data: Data, utType: UTType)? {
         if allowTypes.contains(.heic), let data = heicData() {
             if data.count <= fileLengthLimit {
                 return (data, .heic)

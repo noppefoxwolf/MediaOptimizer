@@ -57,10 +57,22 @@ public final class ImageExportSession: Sendable {
     
     let configuration: ImageExportSessionConfiguration
     
+    func allowsMaxSizes() -> [ImageSize] {
+        let allowsMaxSizes: [ImageSize] = [
+            .ultraHD,
+            .iPhone13ProMax,
+            .fullHD,
+            .hd,
+            .sd
+        ].filter({ $0 <= configuration.maxImageSize })
+        if allowsMaxSizes.isEmpty {
+            return [configuration.maxImageSize]
+        }
+        return allowsMaxSizes
+    }
+    
     public nonisolated func export() throws -> URL {
-        let allowsMaxSizes = [ImageSize.ultraHD, .iPhone13ProMax, .fullHD, .hd, .sd].filter({ $0 <= configuration.maxImageSize })
-        
-        let result = allowsMaxSizes.firstNonNil { [configuration] maxImageSize in
+        let result = allowsMaxSizes().firstNonNil { [configuration] maxImageSize in
             logger.info("try \(maxImageSize.debugDescription)")
             
             let allowTypes = configuration
@@ -78,7 +90,7 @@ public final class ImageExportSession: Sendable {
                 .data(allowTypes: allowTypes, fileLengthLimit: configuration.imageSizeLimit)
             return result
         }!
-        let url = try write(data: result.0, type: result.1)
+        let url = try write(data: result.data, type: result.utType)
         return url
     }
     

@@ -1,5 +1,5 @@
 import XCTest
-import MediaPipeline
+@testable import MediaPipeline
 
 class ImageExportSessionTests: XCTestCase {
     func testExport() async throws {
@@ -21,5 +21,14 @@ class ImageExportSessionTests: XCTestCase {
         let resultImage = PlatformImage(contentsOfFile: url.path())!
         let matrix = Int(resultImage.size.width * resultImage.size.height)
         XCTAssertLessThanOrEqual(matrix, configuration.imageMatrixLimit)
+    }
+    
+    func test400x400Export() async throws {
+        let filePath = Bundle.module.path(forResource: "ultraHD8K", ofType: "jpg")!
+        let image = PlatformImage(contentsOfFile: filePath)!
+        var configuration = ImageExportSessionConfiguration(image: image)
+        configuration.maxImageSize = ImageSize(width: 400, height: 400)
+        let session = ImageExportSession(configuration: configuration)
+        XCTAssertEqual(session.allowsMaxSizes().count, 1)
     }
 }
