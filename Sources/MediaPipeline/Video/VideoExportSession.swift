@@ -1,5 +1,6 @@
 import AVKit
 import Foundation
+import AVFoundationBackport_iOS17
 
 public struct VideoExportSessionConfiguration: Sendable {
     let url: URL
@@ -35,7 +36,7 @@ public final class VideoExportSession: Sendable {
         self.configuration = configuration
     }
     
-    public func export(_ progressUpdateHandler: @escaping (Float) -> Void) async throws -> URL {
+    public func export(_ progressUpdateHandler: @escaping @Sendable (Float) -> Void) async throws -> URL {
         let asset = AVURLAsset(url: configuration.url)
         let preset = prefferedPreset(
             videoMatrixLimit: configuration.videoMatrixLimit,
@@ -55,13 +56,29 @@ public final class VideoExportSession: Sendable {
         guard let type else {
             throw VideoExportSessionError.noPreferredType
         }
+        let progressTask = Task {
+            for try await state in session.states(updateInterval: 0.25) {
+                switch state {
+                case .exporting(let progress):
+                    progressUpdateHandler(Float(progress.fractionCompleted))
+                    break
+                default:
+                    break
+                }
+            }
+        }
         
         do {
             let filename = UUID().uuidString
-            session.outputURL = try URL.temporary(filename: filename, type: type)
-            session.outputFileType = AVFileType(type.identifier)
-            return try await session.export(progressUpdateHandler)
+            let outputURL = try URL.temporary(filename: filename, type: type)
+            try await session.export(
+                to: outputURL,
+                as: AVFileType(type.identifier)
+            )
+            progressTask.cancel()
+            return outputURL
         } catch {
+            progressTask.cancel()
             throw error
         }
     }
@@ -128,3 +145,4 @@ enum ExportPreset: CaseIterable, Sendable {
     }
 }
 
+extension AVAssetExportSession: @unchecked @retroactive Sendable {}

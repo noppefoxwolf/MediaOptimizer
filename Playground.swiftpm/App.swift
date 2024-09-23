@@ -1,5 +1,5 @@
 import SwiftUI
-import _AVKit_SwiftUI
+@preconcurrency import _AVKit_SwiftUI
 import MediaPipeline
 import PhotosUI
 
