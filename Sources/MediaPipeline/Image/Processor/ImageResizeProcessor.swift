@@ -8,9 +8,10 @@ fileprivate let logger = Logger(
 
 struct ImageResizeProcessor: ImageProcess, Sendable {
     let maxSize: ImageSize
+    let allowsSkipRendering: Bool
     
     func process(_ image: PlatformImage) -> PlatformImage {
-        if image.size.width <= Double(maxSize.width) && image.size.height <= Double(maxSize.height) {
+        if image.size.width <= Double(maxSize.width) && image.size.height <= Double(maxSize.height) && allowsSkipRendering {
             logger.info("width: \(image.size.width) <= \(maxSize.width), height: \(image.size.height) <= \(maxSize.height),  passthrough")
             return image
         }

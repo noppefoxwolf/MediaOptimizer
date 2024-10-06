@@ -24,28 +24,28 @@ struct ImagePipeline: Sendable {
 
 extension ImagePipeline {
     func imageOrientationFixed() -> ImagePipeline {
-        var _self = self
-        _self.processors.append(ImageOrientationFixProcessor())
-        return _self
+        var pipeline = self
+        pipeline.processors.append(ImageOrientationFixProcessor())
+        return pipeline
     }
     
-    func resized(maxSize: ImageSize) -> ImagePipeline {
-        var _self = self
-        _self.processors.append(ImageResizeProcessor(maxSize: maxSize))
-        return _self
+    func resized(maxSize: ImageSize, allowsSkipRendering: Bool) -> ImagePipeline {
+        var pipeline = self
+        pipeline.processors.append(ImageResizeProcessor(maxSize: maxSize, allowsSkipRendering: allowsSkipRendering))
+        return pipeline
     }
     
     func clamped(matrixLimit: Int) -> ImagePipeline {
-        var _self = self
-        _self.processors.append(ImageClampedMatrixProcessor(matrixLimit: matrixLimit))
-        return _self
+        var pipeline = self
+        pipeline.processors.append(ImageClampedMatrixProcessor(matrixLimit: matrixLimit))
+        return pipeline
     }
     
     func cropping(to aspectSize: AspectSize?) -> ImagePipeline {
-        var _self = self
+        var pipeline = self
         if let aspectSize {
-            _self.processors.append(ImageCropProcessor(aspectSize: aspectSize))
+            pipeline.processors.append(ImageCropProcessor(aspectSize: aspectSize))
         }
-        return _self
+        return pipeline
     }
 }
