@@ -1,8 +1,10 @@
-import XCTest
+import Testing
 @testable import MediaPipeline
 
-class ImageExportSessionTests: XCTestCase {
-    func testExport() async throws {
+@Suite 
+
+struct ImageExportSessionTests {
+    @Test func export() async throws {
         let filePath = Bundle.module.path(forResource: "ultraHD8K", ofType: "jpg")!
         let image = PlatformImage(contentsOfFile: filePath)!
         var configuration = ImageExportSessionConfiguration(image: image)
@@ -11,24 +13,24 @@ class ImageExportSessionTests: XCTestCase {
         let url = try await session.export()
         print(url)
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
-        XCTAssertLessThanOrEqual(values.fileSize!, configuration.imageSizeLimit)
+        #expect(values.fileSize! <= configuration.imageSizeLimit)
         #if os(iOS)
-        XCTAssertEqual(values.contentType!, .heic)
+        #expect(values.contentType! == .heic)
         #else
-        XCTAssertEqual(values.contentType!, .jpeg)
+        #expect(values.contentType! == .jpeg)
         #endif
         
         let resultImage = PlatformImage(contentsOfFile: url.path())!
         let matrix = Int(resultImage.size.width * resultImage.size.height)
-        XCTAssertLessThanOrEqual(matrix, configuration.imageMatrixLimit)
+        #expect(matrix <= configuration.imageMatrixLimit)
     }
     
-    func test400x400Export() async throws {
+    @Test func 400x400Export() async throws {
         let filePath = Bundle.module.path(forResource: "ultraHD8K", ofType: "jpg")!
         let image = PlatformImage(contentsOfFile: filePath)!
         var configuration = ImageExportSessionConfiguration(image: image)
         configuration.maxImageSize = ImageSize(width: 400, height: 400)
         let session = ImageExportSession(configuration: configuration)
-        XCTAssertEqual(session.allowsMaxSizes().count, 1)
+        #expect(session.allowsMaxSizes().count == 1)
     }
 }

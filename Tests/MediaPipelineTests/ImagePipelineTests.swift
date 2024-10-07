@@ -1,9 +1,11 @@
 @testable import MediaPipeline
 
-import XCTest
+import Testing
 
-class ImagePipelineTests: XCTestCase {
-    func testPipeline() async throws {
+@Suite 
+
+struct ImagePipelineTests {
+    @Test func pipeline() async throws {
         let imagePipeline = ImagePipeline()
             .resized(maxSize: .iPhone13ProMax)
         
@@ -12,11 +14,11 @@ class ImagePipelineTests: XCTestCase {
         
         let resultImage = imagePipeline.makeImage(from: image)
         
-        XCTAssertEqual(resultImage.size.width, 1125)
-        XCTAssertEqual(resultImage.size.height, 2436)
+        #expect(resultImage.size.width == 1125)
+        #expect(resultImage.size.height == 2436)
     }
     
-    func testPipelineHD() async throws {
+    @Test func pipelineHD() async throws {
         let imagePipeline = ImagePipeline()
             .resized(maxSize: .hd)
         
@@ -25,8 +27,8 @@ class ImagePipelineTests: XCTestCase {
         
         let resultImage = imagePipeline.makeImage(from: image)
         
-        XCTAssertEqual(resultImage.size.width, 332)
-        XCTAssertEqual(resultImage.size.height, 720)
+        #expect(resultImage.size.width == 332)
+        #expect(resultImage.size.height == 720)
     }
 }
 

@@ -1,10 +1,12 @@
-import XCTest
+import Testing
 import AVFoundation
 @testable import MediaPipeline
 import UniformTypeIdentifiers
 
-class VideoExportSessionTests: XCTestCase {
-    func testExport() async throws {
+@Suite 
+
+struct VideoExportSessionTests {
+    @Test func export() async throws {
         let url = Bundle.module.url(forResource: "ultraHD8K", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
@@ -12,13 +14,13 @@ class VideoExportSessionTests: XCTestCase {
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
-        XCTAssertLessThanOrEqual(Int(size.width * size.height), configuration.videoMatrixLimit)
+        #expect(Int(size.width * size.height) <= configuration.videoMatrixLimit)
         let attributes = try FileManager.default.attributesOfItem(atPath: outputURL.path)
         let fileSize = attributes[.size] as! Int64
-        XCTAssertLessThanOrEqual(fileSize, configuration.videoSizeLimit)
+        #expect(fileSize <= configuration.videoSizeLimit)
     }
     
-    func testExportVGA() async throws {
+    @Test func exportVGA() async throws {
         let url = Bundle.module.url(forResource: "vga", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
@@ -26,11 +28,11 @@ class VideoExportSessionTests: XCTestCase {
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
-        XCTAssertEqual(size.width, 1280)
-        XCTAssertEqual(size.height, 720)
+        #expect(size.width == 1280)
+        #expect(size.height == 720)
     }
     
-    func testExportSquare() async throws {
+    @Test func exportSquare() async throws {
         let url = Bundle.module.url(forResource: "square", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
@@ -38,23 +40,23 @@ class VideoExportSessionTests: XCTestCase {
         let asset = AVURLAsset(url: outputURL)
         let track = try await asset.loadTracks(withMediaType: .video)[0]
         let size = try await track.load(.naturalSize)
-        XCTAssertEqual(size.width, 512)
-        XCTAssertEqual(size.height, 512)
+        #expect(size.width == 512)
+        #expect(size.height == 512)
     }
     
-    func testTypeConvert() {
+    @Test func typeConvert() {
         let identifier = "video/mp4"
         let utType = UTType(mimeType: identifier)!
-        XCTAssertEqual(utType, .mpeg4Movie)
+        #expect(utType == .mpeg4Movie)
         let avType = AVFileType(utType.identifier)
-        XCTAssertEqual(avType, .mp4)
+        #expect(avType == .mp4)
     }
     
-    func testPrefferedPreset() {
+    @Test func prefferedPreset() {
         let url = Bundle.module.url(forResource: "ultraHD8K", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
         let preset = session.prefferedPreset(videoMatrixLimit: 2_073_600, maxVideoSize: .ultraHD)
-        XCTAssertEqual(preset, .preset1280x720)
+        #expect(preset == .preset1280x720)
     }
 }
