@@ -1,5 +1,6 @@
 import Testing
 @testable import MediaPipeline
+import Foundation
 
 @Suite 
 
@@ -25,7 +26,7 @@ struct ImageExportSessionTests {
         #expect(matrix <= configuration.imageMatrixLimit)
     }
     
-    @Test func 400x400Export() async throws {
+    @Test func exportTo400x400() async throws {
         let filePath = Bundle.module.path(forResource: "ultraHD8K", ofType: "jpg")!
         let image = PlatformImage(contentsOfFile: filePath)!
         var configuration = ImageExportSessionConfiguration(image: image)

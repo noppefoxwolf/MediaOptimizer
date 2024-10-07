@@ -83,7 +83,7 @@ public final class ImageExportSession: Sendable {
             let imagePipeline = ImagePipeline()
                 .imageOrientationFixed()
                 .cropping(to: configuration.croppingAspectSize)
-                .resized(maxSize: maxImageSize, allowsSkipRendering: configuration.allowsSkipRendering)
+                .resized(maxSize: maxImageSize)
                 .clamped(matrixLimit: configuration.imageMatrixLimit)
             
             let result = imagePipeline

@@ -29,9 +29,9 @@ extension ImagePipeline {
         return pipeline
     }
     
-    func resized(maxSize: ImageSize, allowsSkipRendering: Bool) -> ImagePipeline {
+    func resized(maxSize: ImageSize) -> ImagePipeline {
         var pipeline = self
-        pipeline.processors.append(ImageResizeProcessor(maxSize: maxSize, allowsSkipRendering: allowsSkipRendering))
+        pipeline.processors.append(ImageResizeProcessor(maxSize: maxSize))
         return pipeline
     }
     

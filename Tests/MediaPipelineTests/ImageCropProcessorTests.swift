@@ -1,5 +1,6 @@
 import Testing
 @testable import MediaPipeline
+import Foundation
 
 @Suite 
 
