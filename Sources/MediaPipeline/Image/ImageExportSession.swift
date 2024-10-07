@@ -32,6 +32,8 @@ public struct ImageExportSessionConfiguration: Sendable {
     
     public var maxImageSize: ImageSize = .ultraHD
     
+    public var rangeLimit: ImageRange = .extended
+    
     public let image: PlatformImage
     // フォーマットの優先度
     #if os(iOS)
@@ -85,6 +87,7 @@ public final class ImageExportSession: Sendable {
                 .cropping(to: configuration.croppingAspectSize)
                 .resized(maxSize: maxImageSize)
                 .clamped(matrixLimit: configuration.imageMatrixLimit)
+                .limited(in: configuration.rangeLimit)
             
             let result = imagePipeline
                 .makeImage(from: configuration.image)

@@ -48,4 +48,10 @@ extension ImagePipeline {
         }
         return pipeline
     }
+    
+    func limited(in range: ImageRange) -> ImagePipeline {
+        var pipeline = self
+        pipeline.processors.append(ImageRangeProcessor(upperRange: range))
+        return pipeline
+    }
 }

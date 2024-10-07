@@ -42,5 +42,13 @@ extension PlatformImage {
         }
         return nil
     }
+    
+    var imageRange: ImageRange? {
+        switch cgImage?.bitsPerComponent {
+        case 16: .extended
+        case 8: .standard
+        default: nil
+        }
+    }
 }
 
