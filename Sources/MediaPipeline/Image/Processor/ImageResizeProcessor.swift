@@ -10,12 +10,17 @@ struct ImageResizeProcessor: ImageProcess, Sendable {
     let maxSize: ImageSize
     
     func process(_ image: PlatformImage) -> PlatformImage {
-        if image.size.width <= Double(maxSize.width) && image.size.height <= Double(maxSize.height) {
-            logger.info("width: \(image.size.width) <= \(maxSize.width), height: \(image.size.height) <= \(maxSize.height),  passthrough")
+        let actualSize = image.size.applying(CGAffineTransform(scaleX: image.scale, y: image.scale))
+        if actualSize.width <= Double(maxSize.width) && actualSize.height <= Double(maxSize.height) {
+            
+            logger.info(
+                "width: \(actualSize.width) <= \(maxSize.width), height: \(actualSize.height) <= \(maxSize.height),  passthrough"
+            )
+            
             return image
         }
         
-        let newSize = ImageSize(size: image.size).clamped(maxSize: maxSize).cgSize
+        let newSize = ImageSize(size: actualSize).clamped(maxSize: maxSize).cgSize
         let rendererFormat = GraphicsImageRendererFormat()
         rendererFormat.scale = 1
         let renderer = GraphicsImageRenderer(size: newSize, format: rendererFormat)
