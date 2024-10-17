@@ -41,4 +41,23 @@ struct ImageRangeProcessorTests {
         try data.write(to: url)
         print(url)
     }
+    
+    @Test
+    func makeImageTest() async throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.preferredRange = .extended
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1), format: format)
+        let sourceImage = renderer.image(actions: { _ in })
+        #expect(sourceImage.scale == 1)
+        #expect(sourceImage.size.equalTo(CGSize(width: 1, height: 1)))
+        #expect(sourceImage.actualSize == ImageSize(width: 1, height: 1))
+        #expect(sourceImage.imageRange == .extended)
+        
+        let processor = ImageRangeProcessor(upperRange: .standard)
+        let output = processor.process(sourceImage)
+        #expect(output.scale == 1)
+        #expect(output.size.equalTo(CGSize(width: 1, height: 1)))
+        #expect(sourceImage.actualSize == ImageSize(width: 1, height: 1))
+    }
 }

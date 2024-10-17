@@ -57,7 +57,11 @@ public struct Size: Sendable, Hashable {
         let minSizeLength = min(width, height)
         
         if maxSizeLength <= maxMaxSizeLength && minSizeLength <= minMaxSizeLength {
-            logger.info("\(maxSizeLength)x\(minSizeLength) <= \(maxMaxSizeLength)x\(minMaxSizeLength),  passthrough")
+            logger.info("""
+                [Resize]
+                \(maxSizeLength)x\(minSizeLength) <= \(maxMaxSizeLength)x\(minMaxSizeLength) 
+                -> passthrough
+            """)
             return self
         }
         let newSize: Size
@@ -70,7 +74,12 @@ public struct Size: Sendable, Hashable {
             let newWidth = Int(Double(width) * ratio)
             newSize = Size(width: newWidth, height: maxSize.height)
         }
-        logger.info("width: \(width) -> \(newSize.width), height: \(height) -> \(newSize.height),  render")
+        logger.info("""
+            [Resize]
+            width: \(width) -> \(newSize.width)
+            height: \(height) -> \(newSize.height)
+            -> render
+        """)
         return newSize
     }
     

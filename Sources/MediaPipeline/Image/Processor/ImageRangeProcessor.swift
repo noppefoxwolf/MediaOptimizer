@@ -14,6 +14,7 @@ struct ImageRangeProcessor: ImageProcess, Sendable {
         guard imageRange > upperRange else { return image }
         let size = image.size
         let format = GraphicsImageRendererFormat()
+        format.scale = 1
         format.preferredRange = upperRange.graphicsRendererRange
         let renderer = GraphicsImageRenderer(size: size, format: format)
         let output = renderer.image { context in
