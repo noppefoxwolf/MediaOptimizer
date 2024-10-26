@@ -15,11 +15,7 @@ struct ImageExportSessionTests {
         print(url)
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
         #expect(values.fileSize! <= configuration.imageSizeLimit)
-        #if os(iOS)
         #expect(values.contentType! == .heic)
-        #else
-        #expect(values.contentType! == .jpeg)
-        #endif
         
         let resultImage = PlatformImage(contentsOfFile: url.path())!
         let matrix = Int(resultImage.size.width * resultImage.size.height)

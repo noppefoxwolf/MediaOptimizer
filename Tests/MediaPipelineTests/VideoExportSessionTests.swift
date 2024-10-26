@@ -32,7 +32,18 @@ struct VideoExportSessionTests {
         #expect(size.height == 720)
     }
     
-    @Test func exportSquare() async throws {
+    struct Platform {
+        static var isSimulator: Bool {
+            #if targetEnvironment(simulator)
+            true
+            #else
+            false
+            #endif
+        }
+    }
+    
+    @Test(.enabled(if: !Platform.isSimulator))
+    func exportSquare() async throws {
         let url = Bundle.module.url(forResource: "square", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)

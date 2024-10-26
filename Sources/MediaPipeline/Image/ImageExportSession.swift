@@ -36,18 +36,11 @@ public struct ImageExportSessionConfiguration: Sendable {
     
     public let image: PlatformImage
     // フォーマットの優先度
-    #if os(iOS)
     public let formatPriority: [UTType] = [
         .heic,
         .png,
         .jpeg
     ]
-    #else
-    public let formatPriority: [UTType] = [
-        .png,
-        .jpeg
-    ]
-    #endif
     
     public var croppingAspectSize: AspectSize? = nil
     public var allowsSkipRendering: Bool = true

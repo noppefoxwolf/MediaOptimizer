@@ -8,13 +8,12 @@ fileprivate let logger = Logger(
 
 struct ImageOrientationFixProcessor: ImageProcess, Sendable {
     func process(_ image: PlatformImage) -> PlatformImage {
-        #if canImport(UIKit)
         guard image.imageOrientation != .up else {
             logger.info("image orientation is up, passthrougn")
             return image
         }
         logger.log("image orientation is \(image.imageOrientation.rawValue), render")
-        #endif
+        
         let rendererFormat = GraphicsImageRendererFormat()
         rendererFormat.scale = 1
         let renderer = GraphicsImageRenderer(size: image.size, format: rendererFormat)
