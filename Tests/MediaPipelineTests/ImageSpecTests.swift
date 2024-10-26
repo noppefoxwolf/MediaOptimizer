@@ -12,7 +12,6 @@ struct ImageSpecTests {
         configuration.prefersHighDynamicRange = false
         let reader = UIImageReader(configuration: configuration)
         let image = await reader.image(contentsOf: url)!
-        UIGraphicsImageRendererFormat().preferredRange
         #expect(image.cgImage!.bitsPerComponent == 16)
     }
     

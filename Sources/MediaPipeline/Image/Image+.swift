@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 import os
 
 fileprivate let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier! + ".logger",
+    subsystem: Bundle.main.bundleIdentifier!,
     category: #file
 )
 

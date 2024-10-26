@@ -5,7 +5,7 @@ import os
 import Algorithms
 
 fileprivate let logger = Logger(
-    subsystem: Bundle.main.bundleIdentifier! + ".logger",
+    subsystem: Bundle.main.bundleIdentifier!,
     category: #file
 )
 
@@ -94,6 +94,7 @@ public final class ImageExportSession: Sendable {
                 .data(allowTypes: allowTypes, fileLengthLimit: configuration.imageSizeLimit)
             return result
         }!
+        logger.debug("Export : data[\(result.data.count)] as \(result.utType.identifier)")
         let url = try write(data: result.data, type: result.utType)
         return url
     }
