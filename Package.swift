@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "MediaPipeline",
+    name: "MediaOptimizer",
     platforms: [.iOS(.v17)],
     products: [
         .library(
-            name: "MediaPipeline",
-            targets: ["MediaPipeline"]
+            name: "MediaOptimizer",
+            targets: ["MediaOptimizer"]
         ),
     ],
     dependencies: [
@@ -18,15 +18,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "MediaPipeline",
+            name: "MediaOptimizer",
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 "AVFoundationBackport-iOS17"
             ]
         ),
         .testTarget(
-            name: "MediaPipelineTests",
-            dependencies: ["MediaPipeline"],
+            name: "MediaOptimizerTests",
+            dependencies: ["MediaOptimizer"],
             resources: [
                 .copy("Resources/10bit.heic"),
                 .copy("Resources/screenshot.png"),

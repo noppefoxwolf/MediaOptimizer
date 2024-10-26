@@ -1,5 +1,5 @@
-# MediaPipeline
+# MediaOptimizer
 
 Image and Video export utility.
 
-[![Swift Package Manager Test](https://github.com/noppefoxwolf/MediaPipeline/actions/workflows/test.yml/badge.svg)](https://github.com/noppefoxwolf/MediaPipeline/actions/workflows/test.yml)
+[![Swift Package Manager Test](https://github.com/noppefoxwolf/MediaOptimizer/actions/workflows/test.yml/badge.svg)](https://github.com/noppefoxwolf/MediaOptimizer/actions/workflows/test.yml)

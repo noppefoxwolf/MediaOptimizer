@@ -1,6 +1,6 @@
 import Testing
 import AVFoundation
-@testable import MediaPipeline
+@testable import MediaOptimizer
 import UniformTypeIdentifiers
 
 @Suite 

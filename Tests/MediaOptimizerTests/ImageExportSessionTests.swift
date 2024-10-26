@@ -1,5 +1,5 @@
 import Testing
-@testable import MediaPipeline
+@testable import MediaOptimizer
 import Foundation
 
 @Suite 
