@@ -15,6 +15,4 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build and test
-      run: |
-        xcodebuild -downloadPlatform iOS
-        xcodebuild -scheme MediaPipeline test -destination "platform=iOS Simulator,OS=latest"
+      run: xcodebuild -scheme MediaPipeline test -destination "platform=iOS Simulator,name=iPhone 16,OS=latest"
