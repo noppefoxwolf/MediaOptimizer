@@ -39,8 +39,8 @@ let package = Package(
             
             dependencies: [
                 .product(
-                    name: "MediaPipeline",
-                    package: "MediaPipeline"
+                    name: "MediaOptimizer",
+                    package: "MediaOptimizer"
                 )
             ],
             

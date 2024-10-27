@@ -1,6 +1,6 @@
 import SwiftUI
 @preconcurrency import _AVKit_SwiftUI
-import MediaPipeline
+import MediaOptimizer
 import PhotosUI
 
 @main
