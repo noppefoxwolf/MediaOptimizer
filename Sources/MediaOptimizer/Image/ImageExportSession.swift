@@ -24,7 +24,7 @@ public struct ImageExportSessionConfiguration: Sendable {
     }
     
     /// 最大データサイズ
-    public var imageSizeLimit: Int = 16 * 1024 * 1024
+    public var imageSizeLimit: Measurement<UnitInformationStorage> = .init(value: 16, unit: .mebibytes)
     // 面積がnを超えるもの
     // Wifi, 4Kは3840×2160
     // 4G, 1080p
@@ -82,9 +82,10 @@ public final class ImageExportSession: Sendable {
                 .clamped(matrixLimit: configuration.imageMatrixLimit)
                 .limited(in: configuration.rangeLimit)
             
+            let imageSizeLimit = Int(configuration.imageSizeLimit.converted(to: .bytes).value)
             let result = imagePipeline
                 .makeImage(from: configuration.image)
-                .data(allowTypes: allowTypes, fileLengthLimit: configuration.imageSizeLimit)
+                .data(allowTypes: allowTypes, fileLengthLimit: imageSizeLimit)
             return result
         }!
         logger.debug("Export : data[\(result.data.count)] as \(result.utType.identifier)")
