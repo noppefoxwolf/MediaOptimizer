@@ -9,10 +9,10 @@ public struct VideoExportSessionConfiguration: Sendable {
         self.url = url
     }
     
-    public var videoSizeLimit: Int64 = 103809024
+    public var videoSizeLimit: Measurement<UnitInformationStorage> = .init(value: 99, unit: .mebibytes)
     var prefferfVideoSizeLimit: Int64 {
         let rate = wantsAdjustSizeLimit ? 0.9 : 1.0
-        return Int64(Double(videoSizeLimit) * rate)
+        return Int64(videoSizeLimit.converted(to: .bytes).value * rate)
     }
     public var wantsAdjustSizeLimit: Bool = true
     public var videoFrameRateLimit: Int = 120

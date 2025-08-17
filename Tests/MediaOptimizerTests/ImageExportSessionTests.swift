@@ -9,12 +9,12 @@ struct ImageExportSessionTests {
         let filePath = Bundle.module.path(forResource: "ultraHD8K", ofType: "jpg")!
         let image = PlatformImage(contentsOfFile: filePath)!
         var configuration = ImageExportSessionConfiguration(image: image)
-        configuration.imageSizeLimit = 1 * 1024 * 1024
+        configuration.imageSizeLimit = .init(value: 1 * 1024 * 1024, unit: .bytes)
         let session = ImageExportSession(configuration: configuration)
         let url = try await session.export()
         print(url)
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
-        #expect(values.fileSize! <= configuration.imageSizeLimit)
+        #expect(values.fileSize! <= Int(configuration.imageSizeLimit.converted(to: .bytes).value))
         #expect(values.contentType! == .heic)
         
         let resultImage = PlatformImage(contentsOfFile: url.path())!

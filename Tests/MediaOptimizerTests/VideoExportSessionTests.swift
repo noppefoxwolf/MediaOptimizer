@@ -17,7 +17,7 @@ struct VideoExportSessionTests {
         #expect(Int(size.width * size.height) <= configuration.videoMatrixLimit)
         let attributes = try FileManager.default.attributesOfItem(atPath: outputURL.path)
         let fileSize = attributes[.size] as! Int64
-        #expect(fileSize <= configuration.videoSizeLimit)
+        #expect(fileSize <= Int(configuration.videoSizeLimit.converted(to: .bytes).value))
     }
     
     @Test func exportVGA() async throws {
