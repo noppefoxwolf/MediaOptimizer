@@ -63,14 +63,14 @@ struct VideoExportSessionTests {
         #expect(avType == .mp4)
     }
     
-    @Test func prefferedPreset() {
+    @Test func preferredPreset() {
         // 7680x4320=33,177,600
         let url = Bundle.module.url(forResource: "ultraHD8K", withExtension: "mp4")!
         let configuration = VideoExportSessionConfiguration(url: url)
         let session = VideoExportSession(configuration: configuration)
         // 3840x2160=8,294,400
         // 1920x1080=2_073_600
-        let preset = session.prefferedPreset(videoMatrixLimit: 2_073_600, maxVideoSize: .ultraHD)
+        let preset = session.preferredPreset(videoMatrixLimit: 2_073_600, maxVideoSize: .ultraHD)
         #expect(preset == .preset1920x1080)
     }
 }

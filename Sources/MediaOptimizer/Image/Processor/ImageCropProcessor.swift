@@ -15,7 +15,13 @@ struct ImageCropProcessor: ImageProcess, Sendable {
         guard outputRect.size == aspectSize.cgSize else {
             return image
         }
-        let croppedCGImage = image.cgImage!.cropping(to: outputRect)!
+        
+        guard let cgImage = image.cgImage,
+              let croppedCGImage = cgImage.cropping(to: outputRect) else {
+            logger.warning("Failed to crop image, returning original")
+            return image
+        }
+        
         return PlatformImage(cgImage: croppedCGImage)
     }
     

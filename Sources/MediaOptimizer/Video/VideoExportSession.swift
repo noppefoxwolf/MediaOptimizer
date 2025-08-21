@@ -38,7 +38,7 @@ public final class VideoExportSession: Sendable {
     
     public func export(_ progressUpdateHandler: @escaping @Sendable (Float) -> Void) async throws -> URL {
         let asset = AVURLAsset(url: configuration.url)
-        let preset = prefferedPreset(
+        let preset = preferredPreset(
             videoMatrixLimit: configuration.videoMatrixLimit,
             maxVideoSize: configuration.maxVideoSize
         )
@@ -83,7 +83,7 @@ public final class VideoExportSession: Sendable {
         }
     }
     
-    func prefferedPreset(videoMatrixLimit: Int, maxVideoSize: VideoSize) -> ExportPreset? {
+    func preferredPreset(videoMatrixLimit: Int, maxVideoSize: VideoSize) -> ExportPreset? {
         ExportPreset.allCases.reversed().firstNonNil({
             let lessThanEqualMatrix = $0.matrix <= videoMatrixLimit
             let lessThanEqualSize = maxVideoSize.contains($0.size)

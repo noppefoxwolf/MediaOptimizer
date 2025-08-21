@@ -46,6 +46,10 @@ public struct ImageExportSessionConfiguration: Sendable {
     public var allowsSkipRendering: Bool = true
 }
 
+public enum ImageExportError: Error {
+    case unableToOptimizeWithinConstraints
+}
+
 public final class ImageExportSession: Sendable {
     public init(configuration: ImageExportSessionConfiguration) {
         self.configuration = configuration
@@ -68,7 +72,7 @@ public final class ImageExportSession: Sendable {
     }
     
     public nonisolated func export() throws -> URL {
-        let result = allowsMaxSizes().firstNonNil { [configuration] maxImageSize in
+        guard let result = allowsMaxSizes().firstNonNil({ [configuration] maxImageSize in
             logger.info("try \(maxImageSize.debugDescription)")
             
             let allowTypes = configuration
@@ -87,7 +91,9 @@ public final class ImageExportSession: Sendable {
                 .makeImage(from: configuration.image)
                 .data(allowTypes: allowTypes, fileLengthLimit: imageSizeLimit)
             return result
-        }!
+        }) else {
+            throw ImageExportError.unableToOptimizeWithinConstraints
+        }
         logger.debug("Export : data[\(result.data.count)] as \(result.utType.identifier)")
         let url = try write(data: result.data, type: result.utType)
         return url
