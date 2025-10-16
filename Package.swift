@@ -1,11 +1,11 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "MediaOptimizer",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v18)],
     products: [
         .library(
             name: "MediaOptimizer",
@@ -14,14 +14,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
-        .package(url: "https://github.com/noppefoxwolf/AVFoundationBackport-iOS17", from: "0.0.2"),
     ],
     targets: [
         .target(
             name: "MediaOptimizer",
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
-                "AVFoundationBackport-iOS17"
             ]
         ),
         .testTarget(

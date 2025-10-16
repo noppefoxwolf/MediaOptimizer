@@ -1,15 +1,6 @@
 {
-  "originHash" : "47370842910cbd721c22d084226b0c8829ec73b1e97e241768a65b4e7d2d8bb3",
+  "originHash" : "2fe788d3432077e10d515b448602ce52a242229618bd50db470c6186c087808f",
   "pins" : [
-    {
-      "identity" : "avfoundationbackport-ios17",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/noppefoxwolf/AVFoundationBackport-iOS17",
-      "state" : {
-        "revision" : "c6289135633daca8d30008a98dfd90b1a4607a73",
-        "version" : "0.0.2"
-      }
-    },
     {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",

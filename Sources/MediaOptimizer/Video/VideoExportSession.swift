@@ -1,6 +1,5 @@
 import AVKit
 import Foundation
-import AVFoundationBackport_iOS17
 
 public struct VideoExportSessionConfiguration: Sendable {
     let url: URL
